@@ -1,0 +1,15 @@
+version: "1.0"
+policy_name: "mirage-honeypot"
+default_action: ALLOW
+
+ingress_rules:
+  - name: log_all_attacks
+    priority: 100
+    action: LOG
+    conditions:
+      - field: risk_score
+        match_type: threshold
+        value: 0.3
+
+rate_limits:
+  requests_per_minute: 120
