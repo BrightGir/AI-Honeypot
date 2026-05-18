@@ -349,7 +349,7 @@ Set `apiBase`, `wsUrl`, and `apiKey` in `config.local.js`.
 
 ## Demo
 
-Live demo available at [mirage-demo.space](https://mirage-demo.space)
+Live demo available at [mirage-demo.space](http://mirage-demo.space)
 
 ---
 
