@@ -1,10 +1,11 @@
 // Shared components and helpers
 
-const { useState, useEffect, useMemo, useRef, useCallback } = React;
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+
 
 // Expose React hooks globally so all subsequent view scripts can use them
 // without re-destructuring (they run in separate Babel script scopes).
-Object.assign(window, { useState, useEffect, useMemo, useRef, useCallback });
+
 
 const Icon = ({ name, size = 14 }) => {
   const paths = {

@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 // Attack Intelligence view
 
 function IntelView() {

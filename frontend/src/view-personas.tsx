@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 // Decoy Personas view — the killer feature
 
 const SEED_PERSONAS = [

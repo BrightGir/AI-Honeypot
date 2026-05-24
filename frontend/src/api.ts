@@ -1,3 +1,4 @@
+import { MIRAGE_CONFIG } from "./config";
 /**
  * MIRAGE API client
  *
@@ -22,8 +23,8 @@
  * authentication. For public deployments, use a session-cookie-based auth
  * layer in front of the dashboard instead.
  */
-window.MIRAGE_API = (function () {
-  const cfg = window.MIRAGE_CONFIG || {};
+export const MIRAGE_API = (function () {
+  const cfg = MIRAGE_CONFIG || {};
   const BASE   = cfg.apiBase || 'http://localhost:8081/api/v1';
   const WS_URL = cfg.wsUrl   || 'ws://localhost:8081/ws/live';
   // API key: prefer explicit config, then fall back to empty string.

@@ -251,7 +251,7 @@ const TOP_AGENTS = [
   { name: 'finance-assistant', sessions: 615, attacks: 51, honeypot: 22 },
 ];
 
-window.MIRAGE_DATA = {
+export const MIRAGE_DATA = {
   TECHNIQUES, COUNTRIES, USER_AGENTS,
   SEED_SESSIONS, SEED_ATTACKS, DECOY_CHAT,
   DECOY_CHATS_BY_TECHNIQUE,

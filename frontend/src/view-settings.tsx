@@ -1,3 +1,5 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { MIRAGE_API } from "./api";
 // Settings view — theater edition
 
 const SETTINGS_DEFAULTS = {
@@ -41,7 +43,7 @@ function SettingsView() {
 
   // Load upstream config from backend on mount
   React.useEffect(() => {
-    const api = window.MIRAGE_API;
+    const api = MIRAGE_API;
     if (!api) return;
     api.get('/settings').then(s => {
       if (s?.upstream) {
@@ -61,7 +63,7 @@ function SettingsView() {
   const handleUpstreamSave = async () => {
     if (upstreamSaveState !== 'idle') return;
     setUpstreamSaveState('saving');
-    const api = window.MIRAGE_API;
+    const api = MIRAGE_API;
     if (!api) { setUpstreamSaveState('error'); return; }
     try {
       const body = {
@@ -86,7 +88,7 @@ function SettingsView() {
     if (upstreamTestState !== 'idle') return;
     setUpstreamTestState('testing');
     setUpstreamTestMsg('');
-    const api = window.MIRAGE_API;
+    const api = MIRAGE_API;
     if (!api) { setUpstreamTestState('error'); setUpstreamTestMsg('API not configured'); return; }
     try {
       const res = await api.post('/settings/upstream/test', {});
