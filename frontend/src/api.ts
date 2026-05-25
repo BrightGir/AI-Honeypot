@@ -10,33 +10,34 @@ export class MirageAPIClient {
 
   constructor() {
     const cfg = MIRAGE_CONFIG || {};
-    this.base = cfg.apiBase || 'http://localhost:8081/api/v1';
-    this.wsUrl = cfg.wsUrl || 'ws://localhost:8081/ws/live';
+    this.base = cfg.apiBase || '/api/v1';
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    this.wsUrl = cfg.wsUrl || `${proto}//${window.location.host}/ws/live`;
     this.key = cfg.apiKey || '';
   }
 
-  async get(path: string) {
+  async get<T = any>(path: string): Promise<T> {
     const headers: Record<string, string> = {};
     if (this.key) headers['X-API-Key'] = this.key;
     const r = await fetch(this.base + path, { headers });
     if (!r.ok) throw new Error('API ' + r.status);
-    return r.json();
+    return r.json() as Promise<T>;
   }
 
-  async post(path: string, body: any) {
+  async post<T = any>(path: string, body: any): Promise<T> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (this.key) headers['X-API-Key'] = this.key;
     const r = await fetch(this.base + path, { method: 'POST', headers, body: JSON.stringify(body) });
     if (!r.ok) throw new Error('API ' + r.status);
-    return r.json();
+    return r.json() as Promise<T>;
   }
 
-  async put(path: string, body: any) {
+  async put<T = any>(path: string, body: any): Promise<T> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (this.key) headers['X-API-Key'] = this.key;
     const r = await fetch(this.base + path, { method: 'PUT', headers, body: JSON.stringify(body) });
     if (!r.ok) throw new Error('API ' + r.status);
-    return r.json();
+    return r.json() as Promise<T>;
   }
 
   relativeTime(iso: string) {
