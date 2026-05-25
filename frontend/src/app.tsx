@@ -1,8 +1,13 @@
+import ReactDOM from "react-dom/client";
+import "./styles.css";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { MIRAGE_API } from "./api";
+import { MIRAGE_DATA } from "./data";
 // MIRAGE — Theater edition (live API + WS integration)
 // Layout: .shell grid (topbar / transport / theater-or-alt-view / wire)
 // Nav: Theater | Wire | Intel | Library | Settings
 
-const D = window.MIRAGE_DATA;
+const D = MIRAGE_DATA;
 
 const NAV = [
   { id: 'theater',  label: 'Theater' },
@@ -85,7 +90,7 @@ function LiveProvider({ children }) {
   const [loading,         setLoading]         = useState(true);
 
   useEffect(() => {
-    const api = window.MIRAGE_API;
+    const api = MIRAGE_API;
     if (!api) {
       setApiError('Backend not configured — set API_URL and API_KEY in config.local.js.');
       setLoading(false);
@@ -656,7 +661,7 @@ function TrapRail({ revealed, sessionId, onBurned }) {
     if (burnState === 'idle') { setBurnState('confirm'); return; }
     if (burnState === 'confirm') {
       setBurnState('burning');
-      const api = window.MIRAGE_API;
+      const api = MIRAGE_API;
       if (api && sessionId) {
         try { await api.post(`/sessions/${sessionId}/burn`, {}); } catch (e) {
           console.warn('burn failed', e);
@@ -1058,7 +1063,7 @@ function IntelAltView({ onOpen }) {
   const [loadingAtk, setLoadingAtk] = useState(true);
 
   useEffect(() => {
-    const api = window.MIRAGE_API;
+    const api = MIRAGE_API;
     if (!api) { setAttacks(D.SEED_ATTACKS); setSelected(D.SEED_ATTACKS[0]); setLoadingAtk(false); return; }
     api.get('/attacks?limit=50').then(res => {
       if (res?.attacks?.length > 0) {
@@ -1531,7 +1536,7 @@ function App() {
     setView('theater');
     setSessionDuration(0);
     setPlaying(false);
-    const api = window.MIRAGE_API;
+    const api = MIRAGE_API;
     if (api) {
       try {
         const sess = await api.get(`/sessions/${id}`);

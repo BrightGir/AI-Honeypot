@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* MIRAGE — Theater design system
    Merged from: ai-securiry-hackaton (2)/index.html <style> block
    Plus: compatibility aliases and component styles for existing view files.

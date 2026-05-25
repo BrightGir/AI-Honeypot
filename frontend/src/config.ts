@@ -18,7 +18,7 @@
  *              For public-facing deployments, use a server-side session proxy
  *              instead of embedding the key in a static file.
  */
-window.MIRAGE_CONFIG = {
+export const MIRAGE_CONFIG = {
   apiBase: window.location.protocol + '//' + window.location.host + '/api/v1',
   wsUrl:   (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host + '/ws/live',
   apiKey:  '',

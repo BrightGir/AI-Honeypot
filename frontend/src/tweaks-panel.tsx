@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 
 // tweaks-panel.jsx
 // Reusable Tweaks shell + form-control helpers.

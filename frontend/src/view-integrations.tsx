@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 // Integrations view — sponsor showcase
 
 const INTEGRATIONS = [
