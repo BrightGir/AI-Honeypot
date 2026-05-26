@@ -7,7 +7,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 // without re-destructuring (they run in separate Babel script scopes).
 
 
-const Icon = ({ name, size = 14 }) => {
+export const Icon = ({ name, size = 14 }: any) => {
   const paths = {
     shield: <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z" />,
     activity: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
@@ -37,11 +37,11 @@ const Icon = ({ name, size = 14 }) => {
   );
 };
 
-const Pill = ({ kind, children }) => (
+export const Pill = ({ kind, children }: any) => (
   <span className={`pill ${kind}`}><span className="dot"></span>{children}</span>
 );
 
-const RiskMeter = ({ score }) => {
+export const RiskMeter = ({ score }: any) => {
   const color = score >= 80 ? 'var(--threat)' : score >= 50 ? 'var(--warn)' : score >= 25 ? 'var(--info)' : 'var(--safe)';
   return (
     <span className="risk-meter">
