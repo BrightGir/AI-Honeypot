@@ -3,6 +3,8 @@ import "./styles.css";
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { MIRAGE_API } from "./api";
 import { MIRAGE_DATA } from "./data";
+import { useTweaks, TweaksPanel, TweakSection, TweakSelect, TweakRadio } from "./tweaks-panel";
+
 // MIRAGE — Theater edition (live API + WS integration)
 // Layout: .shell grid (topbar / transport / theater-or-alt-view / wire)
 // Nav: Theater | Wire | Intel | Library | Settings
