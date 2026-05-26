@@ -13,7 +13,7 @@ export class MirageAPIClient {
     this.base = cfg.apiBase || '/api/v1';
     const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     this.wsUrl = cfg.wsUrl || `${proto}//${window.location.host}/ws/live`;
-    this.key = cfg.apiKey || '';
+    this.key = cfg.apiKey || import.meta.env.VITE_API_KEY || '';
   }
 
   async get<T = any>(path: string): Promise<T> {
