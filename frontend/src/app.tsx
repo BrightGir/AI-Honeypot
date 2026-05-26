@@ -2,6 +2,7 @@ import ReactDOM from "react-dom/client";
 import "./styles.css";
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { MIRAGE_API } from "./api";
+import { Icon, TIcon } from "./components";
 import { MIRAGE_DATA } from "./data";
 import { useTweaks, TweaksPanel, TweakSection, TweakSelect, TweakRadio } from "./tweaks-panel";
 import { SettingsView } from "./view-settings";
