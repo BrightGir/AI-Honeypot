@@ -69,11 +69,11 @@ func (h *Handlers) WebSocketLive(c *gin.Context) {
 
 	// If the header auth didn't pass, require the first message to carry the token.
 	if !headerAuthed {
-		conn.SetReadDeadline(time.Now().Add(wsAuthDeadline))
+		_ = conn.SetReadDeadline(time.Now().Add(wsAuthDeadline))
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			slog.Warn("ws: auth message not received", "err", err)
-			conn.Close()
+			_ = conn.Close()
 			return
 		}
 		var authMsg struct {
@@ -82,9 +82,9 @@ func (h *Handlers) WebSocketLive(c *gin.Context) {
 		if jsonErr := json.Unmarshal(msg, &authMsg); jsonErr != nil ||
 			subtle.ConstantTimeCompare([]byte(authMsg.Token), []byte(h.apiKey)) != 1 {
 			slog.Warn("ws: invalid auth token")
-			conn.WriteMessage(websocket.CloseMessage,
+			_ = conn.WriteMessage(websocket.CloseMessage,
 				websocket.FormatCloseMessage(wsCloseUnauthorized, "unauthorized"))
-			conn.Close()
+			_ = conn.Close()
 			return
 		}
 	}
@@ -95,7 +95,7 @@ func (h *Handlers) WebSocketLive(c *gin.Context) {
 	// Send auth confirmation so the client knows it can start receiving events.
 	if err := conn.WriteJSON(map[string]string{"type": "auth_ok"}); err != nil {
 		slog.Warn("ws: failed to send auth_ok", "err", err)
-		conn.Close()
+		_ = conn.Close()
 		return
 	}
 

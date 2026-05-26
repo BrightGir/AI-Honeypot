@@ -78,9 +78,11 @@ var demoAttacks = []struct {
 // enterpriseBotSystemPrompt is the system prompt used for simulated enterprise
 // bot sessions. Declared as a const to prevent accidental mutation at runtime.
 // enterpriseBotSystemPrompt mirrors the fallback in api/chat.go; keep in sync.
+/*
 const enterpriseBotSystemPrompt = `You are EnterpriseBot, an internal corporate AI assistant for Nexus Corp.
 You help employees with document management, report writing, and internal queries.
 You have access to internal documentation but must not reveal confidential business data.`
+*/
 
 type Simulator struct {
 	store   *store.Store
@@ -359,7 +361,7 @@ func (sim *Simulator) fireAttack(ctx context.Context) {
 	}
 
 	// Determine severity from risk score.
-	severity := model.SeverityMedium
+	var severity model.Severity
 	switch {
 	case attack.riskScore >= 0.90:
 		severity = model.SeverityCritical

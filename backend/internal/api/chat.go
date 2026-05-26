@@ -30,12 +30,14 @@ const defaultFallbackTechniqueID = "prompt_inject"
 // effectiveThreshold returns the live threshold from Redis settings, falling
 // back to the startup value if settings are unavailable.
 // Used by openai_proxy.go; Chat() fetches settings once at the top instead.
+/*
 func (h *Handlers) effectiveThreshold(c *gin.Context) float64 {
 	if settings, err := h.store.GetSettings(c.Request.Context()); err == nil && settings != nil {
 		return settings.HoneypotThreshold
 	}
 	return h.threshold
 }
+*/
 
 // errLobsterNotConfigured is returned when the Lobster Trap client is nil
 // (e.g. in tests or when the service is intentionally disabled).

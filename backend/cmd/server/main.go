@@ -30,7 +30,7 @@ import (
 func main() {
 	// Load .env before anything else so LOG_FORMAT / LOG_LEVEL are available
 	// when the logger is initialised below.
-	godotenv.Load()
+	_ = godotenv.Load()
 
 	// Configure structured JSON logging for production.
 	// In development (LOG_FORMAT=text) use a human-readable text handler.
@@ -64,7 +64,7 @@ func main() {
 	// Log only the host:port — never log the full URL which may contain a password.
 	redisHost := opt.Addr
 	slog.Info("redis connected", "host", redisHost)
-	defer rdb.Close()
+	defer func() { _ = rdb.Close() }()
 
 	// Secret encryption — used to protect integration API keys at rest in Redis.
 	// Generate a key with: openssl rand -hex 32

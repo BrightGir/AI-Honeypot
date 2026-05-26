@@ -28,7 +28,6 @@ const (
 
 	// threatLevelHighThreshold is an alias for threatHighThreshold used in
 	// threat-level classification to avoid magic numbers at call sites.
-	threatLevelHighThreshold = threatHighThreshold
 
 	defaultPersonaID = "persona-oracle"
 	maxPayloadLen = 4096
@@ -132,7 +131,7 @@ func (sw *Switcher) Engage(ctx context.Context, sess *model.Session, userMessage
 		model.Message{Role: "user", Content: userMessage, Timestamp: time.Now()},
 		model.Message{Role: "assistant", Content: decoyResp, Timestamp: time.Now(), IsDecoy: true},
 	)
-	if settings != nil && settings.MaxSessionMessages > 0 && len(sess.Messages) > settings.MaxSessionMessages {
+	if settings.MaxSessionMessages > 0 && len(sess.Messages) > settings.MaxSessionMessages {
 		sess.Messages = sess.Messages[len(sess.Messages)-settings.MaxSessionMessages:]
 	}
 

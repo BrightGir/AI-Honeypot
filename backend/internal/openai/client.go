@@ -113,7 +113,7 @@ func (c *Client) GenerateDecoyResponse(ctx context.Context, persona *model.Perso
 	if err != nil {
 		return fallback(), nil
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		slog.Warn("openai: GenerateDecoyResponse: unexpected status", "status", resp.StatusCode)
@@ -170,7 +170,7 @@ func (c *Client) AnalyzeText(ctx context.Context, systemPrompt, userPrompt strin
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("openai: AnalyzeText: unexpected status %d", resp.StatusCode)

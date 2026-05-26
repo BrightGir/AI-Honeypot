@@ -17,13 +17,12 @@ import (
 // every connection attempt, preventing SSRF via DNS rebinding attacks.
 // The validation happens at dial time (not at URL-parse time), so a DNS change
 // between the initial check and the actual HTTP request cannot bypass the guard.
+/*
 var safeDialer = &net.Dialer{
 	Timeout:   10 * time.Second,
 	KeepAlive: 30 * time.Second,
 }
 
-// safeTransport wraps the default transport with a dial function that checks
-// the resolved IP on every connection, preventing DNS rebinding SSRF.
 var safeTransport = &http.Transport{
 	DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 		host, port, err := net.SplitHostPort(addr)
@@ -47,10 +46,8 @@ var safeTransport = &http.Transport{
 	},
 }
 
-// safeClient is the only http.Client that should be used for outbound requests.
-// It uses safeTransport, which re-validates the resolved IP on every dial —
-// the authoritative SSRF guard. Never use http.DefaultClient for external calls.
 var safeClient = &http.Client{Transport: safeTransport, Timeout: 15 * time.Second}
+*/
 
 // validateEndpointURL checks that the endpoint is a safe http(s) URL and does
 // not point to private/loopback IP ranges (SSRF prevention).

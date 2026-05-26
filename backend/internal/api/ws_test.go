@@ -52,20 +52,20 @@ func dialAndAuth(t *testing.T, srvURL, token string, header http.Header) (*webso
 	}
 	if token != "" {
 		msg, _ := json.Marshal(map[string]string{"token": token})
-		conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
+		_ = conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
 		if err := conn.WriteMessage(websocket.TextMessage, msg); err != nil {
-			conn.Close()
+			_ = conn.Close()
 			return nil, nil, err
 		}
 	}
-	conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+	_ = conn.SetReadDeadline(time.Now().Add(3 * time.Second))
 	_, reply, err := conn.ReadMessage()
 	if err != nil {
-		conn.Close()
+		_ = conn.Close()
 		return nil, nil, err
 	}
 	var result map[string]string
-	json.Unmarshal(reply, &result)
+	_ = json.Unmarshal(reply, &result)
 	return conn, result, nil
 }
 
@@ -82,10 +82,10 @@ func TestWebSocketLive_NoToken(t *testing.T) {
 		// Connection refused before upgrade — acceptable rejection.
 		return
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }() 
 
 	// Send no auth message; server should close with code 4001 or drop connection.
-	conn.SetReadDeadline(time.Now().Add(wsAuthDeadline + time.Second))
+	_ = conn.SetReadDeadline(time.Now().Add(wsAuthDeadline + time.Second))
 	_, _, readErr := conn.ReadMessage()
 	if readErr == nil {
 		t.Error("expected server to close connection after auth timeout, but read succeeded")
@@ -101,7 +101,7 @@ func TestWebSocketLive_WrongToken(t *testing.T) {
 
 	conn, result, err := dialAndAuth(t, srv.URL, "wrong-token", nil)
 	if err == nil {
-		defer conn.Close()
+		defer func() { _ = conn.Close() }() 
 		// If we got a reply, it must NOT be auth_ok.
 		if result["type"] == "auth_ok" {
 			t.Error("wrong token should not receive auth_ok")
@@ -121,7 +121,7 @@ func TestWebSocketLive_ValidToken(t *testing.T) {
 	if err != nil {
 		t.Fatalf("WebSocket auth: %v", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }() 
 	if result["type"] != "auth_ok" {
 		t.Errorf("expected auth_ok, got %v", result)
 	}
@@ -140,16 +140,16 @@ func TestWebSocketLive_ValidToken_Header(t *testing.T) {
 	if err != nil {
 		t.Fatalf("WebSocket dial with header: %v", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }() 
 
 	// Header auth skips the first-message flow; server sends auth_ok directly.
-	conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+	_ = conn.SetReadDeadline(time.Now().Add(3 * time.Second))
 	_, reply, err := conn.ReadMessage()
 	if err != nil {
 		t.Fatalf("read auth_ok: %v", err)
 	}
 	var result map[string]string
-	json.Unmarshal(reply, &result)
+	_ = json.Unmarshal(reply, &result)
 	if result["type"] != "auth_ok" {
 		t.Errorf("expected auth_ok, got %v", result)
 	}

@@ -95,7 +95,7 @@ func (ts *testServer) delete(t *testing.T, path string) *http.Response {
 
 func decode(t *testing.T, resp *http.Response, dest any) {
 	t.Helper()
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }() 
 	b, _ := io.ReadAll(resp.Body)
 	if err := json.Unmarshal(b, dest); err != nil {
 		t.Fatalf("decode response: %v\nbody: %s", err, b)
@@ -171,7 +171,7 @@ func TestAuthRequired(t *testing.T) {
 			if resp.StatusCode != http.StatusUnauthorized {
 				t.Errorf("GET %s without key = %d, want 401", path, resp.StatusCode)
 			}
-			resp.Body.Close()
+			_ = resp.Body.Close()
 		})
 		t.Run("wrong_key_"+path, func(t *testing.T) {
 			req, _ := http.NewRequest(http.MethodGet, ts.URL+path, nil)
@@ -180,7 +180,7 @@ func TestAuthRequired(t *testing.T) {
 			if resp.StatusCode != http.StatusUnauthorized {
 				t.Errorf("GET %s with wrong key = %d, want 401", path, resp.StatusCode)
 			}
-			resp.Body.Close()
+			_ = resp.Body.Close()
 		})
 	}
 }
@@ -193,7 +193,7 @@ func TestAuthSuccess(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("GET /api/v1/stats with key = %d, want 200", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 // --- Chat endpoint (open, no auth) ---
@@ -248,7 +248,7 @@ func TestChat_RequiresMessage(t *testing.T) {
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Errorf("POST /chat without message = %d, want 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestChat_InvalidSessionID(t *testing.T) {
@@ -262,7 +262,7 @@ func TestChat_InvalidSessionID(t *testing.T) {
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Errorf("POST /chat with invalid session_id = %d, want 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestChat_MessageTooLong(t *testing.T) {
@@ -277,7 +277,7 @@ func TestChat_MessageTooLong(t *testing.T) {
 	if resp.StatusCode != http.StatusBadRequest {
 		t.Errorf("POST /chat with too-long message = %d, want 400", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestChat_SessionPersistence(t *testing.T) {
@@ -412,7 +412,7 @@ func TestGetSession_NotFound(t *testing.T) {
 	if resp.StatusCode != http.StatusNotFound {
 		t.Errorf("GET /api/v1/sessions/nonexistent = %d, want 404", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestGetSession_Found(t *testing.T) {
@@ -461,7 +461,7 @@ func TestGetAttack_NotFound(t *testing.T) {
 	if resp.StatusCode != http.StatusNotFound {
 		t.Errorf("GET /api/v1/attacks/nonexistent = %d, want 404", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestGetAttack_AfterChatAttack(t *testing.T) {
@@ -552,7 +552,7 @@ func TestRulesCRUD(t *testing.T) {
 	if deleteResp.StatusCode != http.StatusOK {
 		t.Fatalf("DELETE /api/v1/rules/%s = %d, want 200", ruleID, deleteResp.StatusCode)
 	}
-	deleteResp.Body.Close()
+	_ = deleteResp.Body.Close()
 
 	// Verify deletion
 	listResp3 := ts.get(t, v1("/rules"), true)
@@ -621,14 +621,14 @@ func TestPersonasCRUD(t *testing.T) {
 	if patchResp.StatusCode != http.StatusOK {
 		t.Fatalf("PATCH /api/v1/personas/%s = %d, want 200", personaID, patchResp.StatusCode)
 	}
-	patchResp.Body.Close()
+	_ = patchResp.Body.Close()
 
 	// Delete
 	deleteResp := ts.delete(t, v1("/personas/"+personaID))
 	if deleteResp.StatusCode != http.StatusOK {
 		t.Fatalf("DELETE /api/v1/personas/%s = %d, want 200", personaID, deleteResp.StatusCode)
 	}
-	deleteResp.Body.Close()
+	_ = deleteResp.Body.Close()
 }
 
 func TestPersonasNotFound(t *testing.T) {
@@ -642,7 +642,7 @@ func TestPersonasNotFound(t *testing.T) {
 	if resp.StatusCode != http.StatusNotFound {
 		t.Errorf("PATCH nonexistent persona = %d, want 404", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 // --- Settings ---
@@ -718,7 +718,7 @@ func TestInjectMessage(t *testing.T) {
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("POST inject = %d, want 200", resp.StatusCode)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 }
 
 func TestBurnSession(t *testing.T) {
@@ -842,7 +842,7 @@ func TestPanicMode(t *testing.T) {
 	if offResp.StatusCode != http.StatusOK {
 		t.Errorf("POST /api/v1/settings/panic off = %d, want 200", offResp.StatusCode)
 	}
-	offResp.Body.Close()
+	_ = offResp.Body.Close()
 }
 
 // --- Store-level tests (with miniredis) ---
@@ -929,7 +929,7 @@ func TestStore_PersonaRoundtrip(t *testing.T) {
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
-	st.SavePersona(ctx, persona)
+	_ = st.SavePersona(ctx, persona)
 
 	got, err := st.GetPersona(ctx, persona.ID)
 	if err != nil {
@@ -961,7 +961,7 @@ func TestStore_RuleCRUD(t *testing.T) {
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
-	st.SaveRule(ctx, rule)
+	_ = st.SaveRule(ctx, rule)
 
 	rules, err := st.ListRules(ctx)
 	if err != nil {
@@ -971,7 +971,7 @@ func TestStore_RuleCRUD(t *testing.T) {
 		t.Errorf("len(rules) = %d, want 1", len(rules))
 	}
 
-	st.DeleteRule(ctx, rule.ID)
+	_ = st.DeleteRule(ctx, rule.ID)
 	rules2, _ := st.ListRules(ctx)
 	if len(rules2) != 0 {
 		t.Errorf("after delete: len(rules) = %d, want 0", len(rules2))
@@ -1013,7 +1013,7 @@ func TestStore_PanicMode(t *testing.T) {
 	if on {
 		t.Error("panic mode should be off by default")
 	}
-	st.SetPanicMode(ctx, true)
+	_ = st.SetPanicMode(ctx, true)
 	on, err = st.GetPanicMode(ctx)
 	if err != nil {
 		t.Fatalf("GetPanicMode: %v", err)
@@ -1021,7 +1021,7 @@ func TestStore_PanicMode(t *testing.T) {
 	if !on {
 		t.Error("panic mode should be on after SetPanicMode(true)")
 	}
-	st.SetPanicMode(ctx, false)
+	_ = st.SetPanicMode(ctx, false)
 	on, err = st.GetPanicMode(ctx)
 	if err != nil {
 		t.Fatalf("GetPanicMode: %v", err)
@@ -1044,7 +1044,7 @@ func TestStore_TechniqueCounts(t *testing.T) {
 		{ID: uuid.New().String(), TechniqueID: "jailbreak_dan", Timestamp: time.Now()},
 	}
 	for _, a := range attacks {
-		st.SaveAttack(ctx, a)
+		_ = st.SaveAttack(ctx, a)
 	}
 
 	counts, err := st.GetTechniqueCounts(ctx)
