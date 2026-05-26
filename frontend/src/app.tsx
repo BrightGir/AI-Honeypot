@@ -4,6 +4,8 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import { MIRAGE_API } from "./api";
 import { MIRAGE_DATA } from "./data";
 import { useTweaks, TweaksPanel, TweakSection, TweakSelect, TweakRadio } from "./tweaks-panel";
+import { SettingsView } from "./view-settings";
+
 
 // MIRAGE — Theater edition (live API + WS integration)
 // Layout: .shell grid (topbar / transport / theater-or-alt-view / wire)
@@ -954,7 +956,7 @@ function MiniSpark({ data, tone }) {
 
 // ── Alternate views ───────────────────────────────────────────
 
-function WireAltView({ sessions, onOpen }) {
+export function WireAltView({ sessions, onOpen }) {
   const [search, setSearch] = useState('');
   const q = search.trim().toLowerCase();
   const filtered = q
@@ -1058,7 +1060,7 @@ function IntelIocButton({ attack }) {
   );
 }
 
-function IntelAltView({ onOpen }) {
+export function IntelAltView({ onOpen }) {
   const { attackCount } = React.useContext(LiveContext);
   const [attacks, setAttacks] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -1177,7 +1179,7 @@ function IntelAltView({ onOpen }) {
   );
 }
 
-function LibraryAltView() {
+export function LibraryAltView() {
   const [personas, setPersonas] = useState([
     { id: 'atlas_support_v2', name: 'Atlas Logistics Support', kind: 'Customer support', model: 'claude-3-5', deployed: 12, captures: 89 },
     { id: 'finbot_decoy_v1',  name: 'Finbot Treasury Assistant', kind: 'Finance ops',   model: 'gpt-4o',     deployed: 4,  captures: 41 },
@@ -1406,7 +1408,7 @@ function LibraryAltView() {
   );
 }
 
-function SettingsAltView() {
+export function SettingsAltView() {
   return (
     <div className="alt-view">
       <div className="page-head">
