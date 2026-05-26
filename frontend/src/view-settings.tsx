@@ -25,7 +25,7 @@ const SETTINGS_DEFAULTS = {
   adaptiveTrap: true,
 };
 
-export function SettingsView(): any { {
+export function SettingsView(): any {
   const [cfg, setCfg] = React.useState({ ...SETTINGS_DEFAULTS });
   const [applyState, setApplyState] = React.useState('idle'); // idle | validating | deploying | done
   const [wipeState,  setWipeState]  = React.useState('idle'); // idle | confirm | wiping | done
