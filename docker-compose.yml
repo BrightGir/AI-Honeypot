@@ -75,6 +75,8 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+      args:
+        - VITE_API_KEY=${API_KEY}
     restart: unless-stopped
     ports:
       - "80:80"
