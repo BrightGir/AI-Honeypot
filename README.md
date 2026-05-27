@@ -1,5 +1,8 @@
 # MIRAGE — AI Honeypot
 
+> ⭐ **MIRAGE is trending!** If you find this project useful, please consider giving it a star to support active defense research.
+
+
 ![MIRAGE banner](banner.png)
 
 > **Alpha software.** APIs, data formats, and configuration may change without notice. Not recommended for production use without additional hardening. Bug reports and feedback welcome via [Issues](../../issues).
