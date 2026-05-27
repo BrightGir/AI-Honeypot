@@ -152,7 +152,7 @@ func (c *Client) writePump(onClose func()) {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		c.closeOnce.Do(func() { c.conn.Close() })
+		c.closeOnce.Do(func() { _ = c.conn.Close() })
 		close(c.done)
 		onClose()
 	}()
@@ -160,10 +160,10 @@ func (c *Client) writePump(onClose func()) {
 	for {
 		select {
 		case msg, ok := <-c.send:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// Hub closed the channel — send a clean close frame.
-				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+				_ = c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
 			if err := c.conn.WriteMessage(websocket.TextMessage, msg); err != nil {
@@ -172,7 +172,7 @@ func (c *Client) writePump(onClose func()) {
 			}
 
 		case <-ticker.C:
-			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+			_ = c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				slog.Debug("ws: ping error", "err", err)
 				return
@@ -193,15 +193,15 @@ func (c *Client) readPump(onClose func()) {
 	}()
 
 	defer func() {
-		c.closeOnce.Do(func() { c.conn.Close() })
+		c.closeOnce.Do(func() { _ = c.conn.Close() })
 		onClose()
 	}()
 
 	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
+	_ = c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error {
 		// Reset the read deadline each time we receive a pong.
-		c.conn.SetReadDeadline(time.Now().Add(pongWait))
+		_ = c.conn.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
 	c.conn.SetCloseHandler(func(code int, text string) error {

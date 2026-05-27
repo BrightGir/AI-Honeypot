@@ -122,19 +122,19 @@ func (s *Store) set(ctx context.Context, key string, v any) error {
 	return s.rdb.HSet(ctx, key, "data", string(b)).Err()
 }
 
-func (s *Store) setWithTTL(ctx context.Context, key string, v any, ttl time.Duration) error {
-	b, err := json.Marshal(v)
-	if err != nil {
-		return err
-	}
-	pipe := s.rdb.Pipeline()
-	pipe.HSet(ctx, key, "data", string(b))
-	if ttl > 0 {
-		pipe.Expire(ctx, key, ttl)
-	}
-	_, err = pipe.Exec(ctx)
-	return err
-}
+// func (s *Store) setWithTTL(ctx context.Context, key string, v any, ttl time.Duration) error {
+// 	b, err := json.Marshal(v)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	pipe := s.rdb.Pipeline()
+// 	pipe.HSet(ctx, key, "data", string(b))
+// 	if ttl > 0 {
+// 		pipe.Expire(ctx, key, ttl)
+// 	}
+// 	_, err = pipe.Exec(ctx)
+// 	return err
+// }
 
 func (s *Store) get(ctx context.Context, key string, dest any) error {
 	val, err := s.rdb.HGet(ctx, key, "data").Result()

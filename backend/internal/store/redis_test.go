@@ -432,7 +432,7 @@ func TestRateLimitCheck_BlocksOverLimit(t *testing.T) {
 
 	// Exhaust the limit.
 	for i := 0; i < 3; i++ {
-		s.RateLimitCheck(ctx, "5.6.7.8", 3, time.Minute)
+		_, _, _ = s.RateLimitCheck(ctx, "5.6.7.8", 3, time.Minute)
 	}
 
 	// Next request must be blocked.
@@ -454,7 +454,7 @@ func TestRateLimitCheck_DifferentIPsAreIndependent(t *testing.T) {
 
 	// Exhaust limit for IP A.
 	for i := 0; i < 2; i++ {
-		s.RateLimitCheck(ctx, "10.0.0.1", 2, time.Minute)
+		_, _, _ = s.RateLimitCheck(ctx, "10.0.0.1", 2, time.Minute)
 	}
 	allowedA, _, _ := s.RateLimitCheck(ctx, "10.0.0.1", 2, time.Minute)
 	if allowedA {
@@ -474,7 +474,7 @@ func TestRateLimitCheck_WindowReset(t *testing.T) {
 
 	// Exhaust limit.
 	for i := 0; i < 3; i++ {
-		s.RateLimitCheck(ctx, "9.9.9.9", 3, time.Second)
+		_, _, _ = s.RateLimitCheck(ctx, "9.9.9.9", 3, time.Second)
 	}
 	allowed, _, _ := s.RateLimitCheck(ctx, "9.9.9.9", 3, time.Second)
 	if allowed {

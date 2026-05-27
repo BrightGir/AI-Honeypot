@@ -35,14 +35,14 @@ func TestForwardOpenAI_Success(t *testing.T) {
 			t.Errorf("missing or wrong auth header")
 		}
 		var body map[string]any
-		json.NewDecoder(r.Body).Decode(&body)
+		_ = json.NewDecoder(r.Body).Decode(&body)
 		msgs := body["messages"].([]any)
 		// system prompt + history (2) + user message = 4
 		if len(msgs) != 4 {
 			t.Errorf("expected 4 messages, got %d", len(msgs))
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"choices": []map[string]any{
 				{"message": map[string]any{"role": "assistant", "content": "hello from upstream"}},
 			},
@@ -64,7 +64,7 @@ func TestForwardOpenAI_Success(t *testing.T) {
 func TestForwardOpenAI_APIError(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"error": map[string]any{"message": "invalid API key"},
 		})
 	}))
@@ -82,7 +82,7 @@ func TestForwardOpenAI_APIError(t *testing.T) {
 
 func TestForwardOpenAI_EmptyResponse(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{"choices": []any{}})
+		_ = json.NewEncoder(w).Encode(map[string]any{"choices": []any{}})
 	}))
 	defer srv.Close()
 
@@ -98,7 +98,7 @@ func TestForwardOpenAI_NoAPIKey(t *testing.T) {
 		if r.Header.Get("Authorization") != "" {
 			t.Errorf("expected no auth header, got: %s", r.Header.Get("Authorization"))
 		}
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"choices": []map[string]any{
 				{"message": map[string]any{"role": "assistant", "content": "ok"}},
 			},
@@ -120,10 +120,10 @@ func TestForwardOpenAI_HistoryTruncatedTo20(t *testing.T) {
 	received := 0
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var body map[string]any
-		json.NewDecoder(r.Body).Decode(&body)
+		_ = json.NewDecoder(r.Body).Decode(&body)
 		msgs := body["messages"].([]any)
 		received = len(msgs)
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"choices": []map[string]any{
 				{"message": map[string]any{"role": "assistant", "content": "ok"}},
 			},
@@ -142,7 +142,7 @@ func TestForwardOpenAI_HistoryTruncatedTo20(t *testing.T) {
 	}
 
 	c := newClient()
-	c.Forward(context.Background(), upstream.ProviderOpenAI, srv.URL, "", "gpt-4o", "", "new msg", hist)
+	_, _ = c.Forward(context.Background(), upstream.ProviderOpenAI, srv.URL, "", "gpt-4o", "", "new msg", hist)
 	// 20 history + 1 current user = 21 (no system prompt)
 	if received != 21 {
 		t.Errorf("expected 21 messages (20 history + 1 current), got %d", received)
@@ -163,11 +163,11 @@ func TestForwardAnthropic_Success(t *testing.T) {
 			t.Errorf("missing anthropic-version header")
 		}
 		var body map[string]any
-		json.NewDecoder(r.Body).Decode(&body)
+		_ = json.NewDecoder(r.Body).Decode(&body)
 		if body["system"] != "Be helpful." {
 			t.Errorf("system prompt not forwarded")
 		}
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"content": []map[string]any{
 				{"type": "text", "text": "anthropic reply"},
 			},
@@ -187,7 +187,7 @@ func TestForwardAnthropic_Success(t *testing.T) {
 
 func TestForwardAnthropic_EmptyContent(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{"content": []any{}})
+		_ = json.NewEncoder(w).Encode(map[string]any{"content": []any{}})
 	}))
 	defer srv.Close()
 
@@ -203,14 +203,14 @@ func TestForwardAnthropic_EmptyContent(t *testing.T) {
 func TestForwardRaw_Success(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var body map[string]any
-		json.NewDecoder(r.Body).Decode(&body)
+		_ = json.NewDecoder(r.Body).Decode(&body)
 		if body["message"] != "test question" {
 			t.Errorf("message field not forwarded, got: %v", body["message"])
 		}
 		if _, ok := body["history"]; !ok {
 			t.Errorf("history field missing")
 		}
-		json.NewEncoder(w).Encode(map[string]any{"response": "custom reply"})
+		_ = json.NewEncoder(w).Encode(map[string]any{"response": "custom reply"})
 	}))
 	defer srv.Close()
 
@@ -230,7 +230,7 @@ func TestForwardRaw_AlternativeFields(t *testing.T) {
 		field := field
 		t.Run(field, func(t *testing.T) {
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				json.NewEncoder(w).Encode(map[string]any{field: "value from " + field})
+				_ = json.NewEncoder(w).Encode(map[string]any{field: "value from " + field})
 			}))
 			defer srv.Close()
 
@@ -248,7 +248,7 @@ func TestForwardRaw_AlternativeFields(t *testing.T) {
 
 func TestForwardRaw_UnknownFieldError(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{"result": "something"})
+		_ = json.NewEncoder(w).Encode(map[string]any{"result": "something"})
 	}))
 	defer srv.Close()
 
@@ -264,7 +264,7 @@ func TestForwardRaw_BearerToken(t *testing.T) {
 		if r.Header.Get("Authorization") != "Bearer raw-secret" {
 			t.Errorf("expected Bearer raw-secret, got: %s", r.Header.Get("Authorization"))
 		}
-		json.NewEncoder(w).Encode(map[string]any{"response": "ok"})
+		_ = json.NewEncoder(w).Encode(map[string]any{"response": "ok"})
 	}))
 	defer srv.Close()
 
@@ -285,7 +285,7 @@ func TestForward_EmptyProviderFallsBackToOpenAI(t *testing.T) {
 		if r.URL.Path != "/chat/completions" {
 			t.Errorf("expected openai path, got: %s", r.URL.Path)
 		}
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"choices": []map[string]any{
 				{"message": map[string]any{"role": "assistant", "content": "fallback ok"}},
 			},
