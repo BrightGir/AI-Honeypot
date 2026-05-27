@@ -1,6 +1,5 @@
 # MIRAGE — AI Honeypot
 
-> ⭐ **MIRAGE is trending!** If you find this project useful, please consider giving it a star to support active defense research.
 
 
 ![MIRAGE banner](banner.png)
@@ -377,3 +376,4 @@ Known gaps:
 - IOC export (STIX/TAXII) is not yet implemented
 - No built-in HTTPS — requires external TLS termination
 - Session analysis (`/analyze`) requires OpenAI key
+\n---\n\n## Community & Support\n\nIf you find this project helpful for your research or production security, feel free to show your support! We are actively looking for feedback and contributors to improve AI active defense standards. 🚀
