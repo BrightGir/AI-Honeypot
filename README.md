@@ -376,4 +376,4 @@ Known gaps:
 - IOC export (STIX/TAXII) is not yet implemented
 - No built-in HTTPS — requires external TLS termination
 - Session analysis (`/analyze`) requires OpenAI key
-\n---\n\n## Community & Support\n\nIf you find this project helpful for your research or production security, feel free to show your support! We are actively looking for feedback and contributors to improve AI active defense standards. 🚀
+\n---\n\n## Community & Support\n\nIf you find this project helpful for your research or production security, please consider showing your support by giving this repository a ⭐! We are actively looking for feedback and contributors to improve AI active defense standards. 🚀
